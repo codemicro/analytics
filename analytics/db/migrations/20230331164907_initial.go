@@ -12,6 +12,7 @@ func init() {
 
 	tables := []any{
 		&models.Request{},
+		&models.Session{},
 	}
 
 	Migrations.MustRegister(func(ctx context.Context, db *bun.DB) error {

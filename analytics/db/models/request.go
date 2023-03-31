@@ -16,4 +16,7 @@ type Request struct {
 	URI       string
 	Referer   string
 	UserAgent string
+
+	Session   *Session `bun:"rel:belongs-to,join:session_id=id"`
+	SessionID string   `bun:",nullzero"`
 }

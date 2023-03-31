@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"github.com/codemicro/analytics/analytics/db/models"
 	"github.com/lithammer/shortuuid/v4"
@@ -23,10 +24,30 @@ func (i *Ingest) processLog(inp []byte) {
 	req, err := cl.ToRequestModel()
 	if err != nil {
 		log.Error().Err(err).Bytes("raw_json", inp).Msg("could not convert CaddyLog to Request")
+		return
 	}
 
-	if _, err := i.db.DB.NewInsert().Model(req).Exec(context.Background()); err != nil {
+	tx, err := i.db.DB.BeginTx(context.Background(), &sql.TxOptions{})
+	if err != nil {
+		log.Error().Err(err).Msg("failed to start transaction")
+		return
+	}
+
+	sess, err := i.assignToSession(tx, req)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to assign session to request")
+	}
+
+	req.SessionID = sess.ID
+
+	if _, err := tx.NewInsert().Model(req).Exec(context.Background()); err != nil {
 		log.Error().Err(err).Msg("could not save request into database")
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Error().Err(err).Msg("unable to commit transaction")
+		return
 	}
 }
 
