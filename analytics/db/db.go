@@ -9,6 +9,7 @@ import (
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 	"github.com/uptrace/bun/driver/sqliteshim"
+	"github.com/uptrace/bun/extra/bundebug"
 	"github.com/uptrace/bun/migrate"
 )
 
@@ -23,6 +24,9 @@ func New(conf *config.Config) (*DB, error) {
 	}
 
 	db := bun.NewDB(sqldb, sqlitedialect.New())
+	if config.Debug {
+		db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	}
 
 	log.Info().Msg("migrating database")
 	mig := migrate.NewMigrator(db, migrations.Migrations)

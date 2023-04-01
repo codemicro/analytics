@@ -1,0 +1,31 @@
+<div class="table" hx-target="this">
+  <table>
+    <tr>
+      {% for header in headers %}
+        <th>
+          {% if header.Sortable %}
+            <a href="#" hx-get="{{ path }}?sortKey={{ header.Slug }}{% if sortKey and header.Slug == sortKey %}&sortDir={% if sortDirection == "asc" %}desc{% elif sortDirection == "desc" %}asc{% endif %}{% endif %}">
+          {% endif %}
+          {{ header.Name }}{% if sortKey %}{% if header.Slug == sortKey %} {% if sortDirection == "asc" %}▲{% else %}▼{% endif %}{% endif %}{% endif %}
+          {% if header.Sortable %}</a>{% endif %}
+        </th>
+      {% endfor %}
+    </tr>
+    {% for row in rows %}
+    <tr>
+      {% for item in row %}
+        {% with headers[forloop.Counter - 1] as header %}
+          {% if header.Safe %}
+            <td>{{ item | safe }}</td>
+          {% else %}
+            <td>{{ item }}</td>
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% if showNumberOfEntries %}
+  <span style="margin-top: 5px" class="italic">{{ rows | length }} records</span>
+  {% endif %}
+</div>
