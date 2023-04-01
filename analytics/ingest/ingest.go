@@ -12,7 +12,7 @@ import (
 
 type Ingest struct {
 	db       *db.DB
-	Listener net.Listener
+	listener net.Listener
 }
 
 func Start(conf *config.Config, database *db.DB) (*Ingest, error) {
@@ -21,21 +21,25 @@ func Start(conf *config.Config, database *db.DB) (*Ingest, error) {
 	}
 
 	var err error
-	ingest.Listener, err = net.Listen("tcp", conf.Ingest.Address)
+	ingest.listener, err = net.Listen("tcp", conf.Ingest.Address)
 	if err != nil {
 		return nil, err
 	}
 
 	go ingest.serveConnections()
 
-	log.Info().Msgf("listener alive on %s", ingest.Listener.Addr().String())
+	log.Info().Msgf("listener alive on %s", ingest.listener.Addr().String())
 
 	return ingest, nil
 }
 
+func (i *Ingest) Stop() error {
+	return i.listener.Close()
+}
+
 func (i *Ingest) serveConnections() {
 	for {
-		conn, err := i.Listener.Accept()
+		conn, err := i.listener.Accept()
 		if err != nil {
 			if errors.Is(err, net.ErrClosed) {
 				break

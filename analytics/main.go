@@ -36,7 +36,7 @@ func run() error {
 
 	log.Info().Msg("terminating")
 
-	_ = ig.Listener.Close()
+	_ = ig.Stop()
 	return nil
 }
 
