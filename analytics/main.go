@@ -4,6 +4,7 @@ import (
 	"github.com/codemicro/analytics/analytics/config"
 	"github.com/codemicro/analytics/analytics/db"
 	"github.com/codemicro/analytics/analytics/ingest"
+	"github.com/codemicro/analytics/analytics/webui"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -32,11 +33,14 @@ func run() error {
 		return err
 	}
 
+	http := webui.Start(conf, database)
+
 	waitForSignal(syscall.SIGINT)
 
 	log.Info().Msg("terminating")
 
 	_ = ig.Stop()
+	_ = http.Stop()
 	return nil
 }
 

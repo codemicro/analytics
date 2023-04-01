@@ -11,6 +11,9 @@ type Config struct {
 	Database struct {
 		DSN string
 	}
+	HTTP struct {
+		Address string
+	}
 }
 
 func Load() (*Config, error) {
@@ -21,6 +24,7 @@ func Load() (*Config, error) {
 
 	conf := new(Config)
 	conf.Ingest.Address = asString(cl.withDefault("ingest.address", "127.0.0.1:7500"))
+	conf.HTTP.Address = asString(cl.withDefault("http.address", "127.0.0.1:8080"))
 	conf.Database.DSN = asString(cl.withDefault("database.dsn", "analytics.db"))
 
 	return conf, nil
