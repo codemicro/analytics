@@ -8,14 +8,15 @@ import (
 type Request struct {
 	bun.BaseModel
 
-	ID        string `bun:",pk"`
-	Time      time.Time
-	IPAddr    string
-	Host      string
-	RawURI    string
-	URI       string
-	Referer   string
-	UserAgent string
+	ID         string `bun:",pk"`
+	Time       time.Time
+	IPAddr     string
+	Host       string
+	RawURI     string
+	URI        string
+	Referer    string
+	UserAgent  string
+	StatusCode int
 
 	Session   *Session `bun:"rel:belongs-to,join:session_id=id"`
 	SessionID string   `bun:",nullzero"`

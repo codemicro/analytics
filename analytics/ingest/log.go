@@ -102,13 +102,14 @@ func (cl *CaddyLog) ToRequestModel() (*models.Request, error) {
 	}
 
 	return &models.Request{
-		ID:        shortuuid.New(),
-		Time:      requestTime,
-		IPAddr:    cl.Request.RemoteIP,
-		Host:      cl.Request.Host,
-		RawURI:    cl.Request.URI,
-		URI:       parsedURL.Path,
-		Referer:   cl.getRequestHeader("Referer"),
-		UserAgent: cl.getRequestHeader("User-Agent"),
+		ID:         shortuuid.New(),
+		Time:       requestTime,
+		IPAddr:     cl.Request.RemoteIP,
+		Host:       cl.Request.Host,
+		RawURI:     cl.Request.URI,
+		URI:        parsedURL.Path,
+		Referer:    cl.getRequestHeader("Referer"),
+		UserAgent:  cl.getRequestHeader("User-Agent"),
+		StatusCode: cl.Status,
 	}, nil
 }
