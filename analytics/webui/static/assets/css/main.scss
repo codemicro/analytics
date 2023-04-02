@@ -64,6 +64,7 @@ div.table {
     width: 60%;
     white-space: nowrap;
     border-collapse: collapse;
+    margin-bottom: 10px;
 
     overflow-y: scroll;
 
@@ -80,6 +81,5 @@ div.table {
       border-bottom: 3px solid black;
       background-color: unset;
     }
-
   }
 }

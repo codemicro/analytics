@@ -1,7 +1,6 @@
 package webui
 
 import (
-	"fmt"
 	"github.com/flosch/pongo2/v6"
 	"github.com/gofiber/fiber/v2"
 	"strings"
@@ -45,7 +44,6 @@ func (wui *WebUI) renderHTMLTable(ctx *fiber.Ctx, ht *HTMLTable) error {
 	}
 
 	if sortDirection == "" || !(sortDirection == "asc" || sortDirection == "desc") {
-		fmt.Println("ere", sortDirection, sortKey)
 		if sortKey == "" {
 			sortDirection = ""
 		} else {

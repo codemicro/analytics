@@ -1,6 +1,17 @@
 {% extends "extendable/base.html" %}
 
 {% block main %}
+<h2>Top 10 URLs</h2>
+
+<div hx-get="/partial/topURLs?n=10"
+     hx-trigger="load"
+     hx-swap="outerHTML"
+>
+    Loading...
+</div>
+
+<a href="/top">[See all]</a>
+
 <h2>Active sessions</h2>
 
 <div hx-get="/partial/activeSessions"
@@ -8,7 +19,5 @@
         hx-swap="outerHTML"
 >
     Loading...
-</div>
-
 </div>
 {% endblock %}

@@ -6,6 +6,7 @@ import (
 	"github.com/codemicro/analytics/analytics/db/models"
 	"github.com/flosch/pongo2/v6"
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 )
 
 func (wui *WebUI) page_index(ctx *fiber.Ctx) error {
@@ -52,6 +53,45 @@ func (wui *WebUI) partial_activeSessionsTable(ctx *fiber.Ctx) error {
 		DefaultSortKey:       "last_seen",
 		DefaultSortDirection: "desc",
 		ShowNumberOfEntries:  true,
+	}
+	return wui.renderHTMLTable(ctx, ht)
+}
+
+func (wui *WebUI) partial_topURLs(ctx *fiber.Ctx) error {
+	nStr := ctx.Query("n")
+	var n int
+	if nStr != "" {
+		n, _ = strconv.Atoi(nStr)
+	}
+
+	ht := &HTMLTable{
+		Headers: []*HTMLTableHeader{
+			{"Count", "", false, false},
+			{"Host", "", false, false},
+			{"Path", "", false, false},
+		},
+		Data: func(sortKey, sortDirection string) ([][]any, error) {
+			var counts []struct {
+				Host  string
+				URI   string
+				Count int
+			}
+			q := wui.db.DB.NewSelect().
+				ColumnExpr(`"host", "uri", COUNT(*) as "count"`).Table("requests").GroupExpr(`"host", "uri"`).OrderExpr(`"count" DESC`)
+			if n > 0 {
+				q = q.Limit(n)
+			}
+			if err := q.Scan(context.Background(), &counts); err != nil {
+				return nil, err
+			}
+
+			var res [][]any
+			for _, c := range counts {
+				res = append(res, []any{c.Count, c.Host, c.URI})
+			}
+
+			return res, nil
+		},
 	}
 	return wui.renderHTMLTable(ctx, ht)
 }

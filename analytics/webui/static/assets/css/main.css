@@ -46,6 +46,7 @@ div.table table {
   width: 60%;
   white-space: nowrap;
   border-collapse: collapse;
+  margin-bottom: 10px;
   overflow-y: scroll;
 }
 div.table table tr:nth-child(even) {
