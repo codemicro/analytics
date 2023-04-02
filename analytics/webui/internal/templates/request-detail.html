@@ -1,0 +1,20 @@
+{% extends "extendable/base.html" %}
+
+{% block main %}
+<a href="/">[Home]</a>
+
+<h2>Request detail</h2>
+
+<p>
+    ID: {{ request.ID }}<br>
+    Time: {{ request.Time | date:"2006-01-02 15:04:05" }}<br>
+    IP address: {{ request.IPAddr }}<br>
+    Host: {{ request.Host }}<br>
+    Raw path: {{ request.RawURI }}<br>
+    Normalised path: {{ request.URI }}<br>
+    Referer: {% if request.Referer %}{{ request.Referer }}{% else %}<span class="italic">unset</span>{% endif %}<br>
+    User agent: {% if request.UserAgent %}{{ request.UserAgent }}{% else %}<span class="italic">unset</span>{% endif %}<br>
+    Status code: {{ request.StatusCode }}<br>
+    Session: <a href="/session?id={{ request.SessionID }}">{{ request.SessionID }}</a>
+</p>
+{% endblock %}

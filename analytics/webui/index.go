@@ -3,7 +3,6 @@ package webui
 import (
 	"context"
 	"fmt"
-	"github.com/codemicro/analytics/analytics/db/models"
 	"github.com/flosch/pongo2/v6"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
@@ -23,16 +22,12 @@ func (wui *WebUI) partial_activeSessionsTable(ctx *fiber.Ctx) error {
 			{"Last seen", "last_seen", true, false},
 		},
 		Data: func(sortKey, sortDirection string) ([][]any, error) {
-			var sessions []*models.Session
-			q := wui.db.DB.NewSelect().
-				Model((*models.Session)(nil)).
-				ColumnExpr("*").
-				ColumnExpr(`(select max("time") as "time" from requests where session_id = "session"."id") as "last_seen"`).
-				Where(`datetime() < datetime("last_seen", '+30 minutes')`)
-			if sortKey != "" {
-				q = q.Order(sortKey + " " + sortDirection)
+			var sort string
+			if !(sortKey == "" || sortDirection == "") {
+				sort = sortKey + " " + sortDirection
 			}
-			if err := q.Scan(context.Background(), &sessions); err != nil {
+			sessions, err := wui.db.GetSessionsWithActivityAfter(30, sort)
+			if err != nil {
 				return nil, err
 			}
 
@@ -64,6 +59,12 @@ func (wui *WebUI) partial_topURLs(ctx *fiber.Ctx) error {
 		n, _ = strconv.Atoi(nStr)
 	}
 
+	hoursStr := ctx.Query("hours")
+	var hours int
+	if hoursStr != "" {
+		hours, _ = strconv.Atoi(hoursStr)
+	}
+
 	ht := &HTMLTable{
 		Headers: []*HTMLTableHeader{
 			{"Count", "", false, false},
@@ -77,9 +78,15 @@ func (wui *WebUI) partial_topURLs(ctx *fiber.Ctx) error {
 				Count int
 			}
 			q := wui.db.DB.NewSelect().
-				ColumnExpr(`"host", "uri", COUNT(*) as "count"`).Table("requests").GroupExpr(`"host", "uri"`).OrderExpr(`"count" DESC`)
+				ColumnExpr(`"host", "uri", COUNT(*) as "count"`).
+				Table("requests").
+				GroupExpr(`"host", "uri"`).
+				OrderExpr(`"count" DESC`)
 			if n > 0 {
 				q = q.Limit(n)
+			}
+			if hours > 0 {
+				q = q.Where(fmt.Sprintf(`datetime() < datetime(time, '+%d hours')`, hours))
 			}
 			if err := q.Scan(context.Background(), &counts); err != nil {
 				return nil, err

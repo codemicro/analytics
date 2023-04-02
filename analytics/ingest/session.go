@@ -16,7 +16,7 @@ func (i *Ingest) assignToSession(tx bun.Tx, request *models.Request) (*models.Se
 		Model(sess).
 		Where("ip_addr = ?", request.IPAddr).
 		Where("user_agent = ?", request.UserAgent).
-		Where(`? < datetime((select max("time") as "time" from requests where session_id = "session"."id"), '+30 minutes')`, request.Time).
+		Where(`? < datetime((select max("time") as "time" from requests where session_id = "session"."id"), '+2 hours')`, request.Time).
 		Scan(context.Background(), sess)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {

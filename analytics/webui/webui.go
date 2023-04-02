@@ -104,6 +104,11 @@ func (wui *WebUI) registerHandlers() {
 
 	wui.app.Get("/partial/topURLs", wui.partial_topURLs)
 
+	wui.app.Get("/request", wui.page_requestDetail)
+
+	wui.app.Get("/sessions", wui.page_listSessions)
+	wui.app.Get("/partial/listSessions", wui.partial_listSessions)
+
 	wui.app.Use("/", filesystem.New(filesystem.Config{
 		Root:       http.FS(static),
 		PathPrefix: "static",

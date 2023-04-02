@@ -1,0 +1,14 @@
+{% extends "extendable/base.html" %}
+
+{% block main %}
+<a href="/">[Home]</a>
+
+<h2>All sessions</h2>
+
+<div hx-get="/partial/listSessions"
+     hx-trigger="load"
+     hx-swap="outerHTML"
+>
+    Loading...
+</div>
+{% endblock %}

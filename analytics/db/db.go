@@ -3,8 +3,10 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/codemicro/analytics/analytics/config"
 	"github.com/codemicro/analytics/analytics/db/migrations"
+	"github.com/codemicro/analytics/analytics/db/models"
 	"github.com/rs/zerolog/log"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/sqlitedialect"
@@ -44,4 +46,22 @@ func New(conf *config.Config) (*DB, error) {
 	return &DB{
 		DB: db,
 	}, nil
+}
+
+func (db *DB) GetSessionsWithActivityAfter(minutes int, sort string) ([]*models.Session, error) {
+	var sessions []*models.Session
+	q := db.DB.NewSelect().
+		Model((*models.Session)(nil)).
+		ColumnExpr("*").
+		ColumnExpr(`(select max("time") as "time" from requests where session_id = "session"."id") as "last_seen"`)
+	if sort != "" {
+		q = q.Order(sort)
+	}
+	if minutes > 0 {
+		q = q.Where(fmt.Sprintf(`datetime() < datetime("last_seen", '+%d minutes')`, minutes))
+	}
+	if err := q.Scan(context.Background(), &sessions); err != nil {
+		return nil, err
+	}
+	return sessions, nil
 }

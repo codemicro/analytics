@@ -14,10 +14,8 @@ import (
 func (wui *WebUI) page_logsFromSession(ctx *fiber.Ctx) error {
 	id := ctx.Query("id")
 
-	pctx := make(pongo2.Context)
-
 	if id == "" {
-		return ctx.RedirectBack("/")
+		return fiber.ErrBadRequest
 	}
 
 	session := new(models.Session)
@@ -27,7 +25,9 @@ func (wui *WebUI) page_logsFromSession(ctx *fiber.Ctx) error {
 		}
 		return err
 	}
-	pctx["session"] = session
+	pctx := pongo2.Context{
+		"session": session,
+	}
 
 	return wui.sendTemplate(ctx, "logs-from-session.html", pctx)
 }
@@ -44,6 +44,7 @@ func (wui *WebUI) partial_logsFromSession(ctx *fiber.Ctx) error {
 			{"Raw path", "raw_uri", true, false},
 			{"Status", "status_code", true, false},
 			{"Referer", "", false, false},
+			{"", "", false, true},
 		},
 		Data: func(sortKey, sortDirection string) ([][]any, error) {
 			var reqs []*models.Request
@@ -63,6 +64,7 @@ func (wui *WebUI) partial_logsFromSession(ctx *fiber.Ctx) error {
 					request.RawURI,
 					request.StatusCode,
 					getValue(pongo2.ApplyFilter("default", pongo2.AsValue(request.Referer), unsetValue)),
+					fmt.Sprintf(`<a href="/request?id=%s">[Link]</a>`, request.ID),
 				})
 			}
 
