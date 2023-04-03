@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/codemicro/analytics/analytics/config"
 	"github.com/codemicro/analytics/analytics/db"
+	"github.com/codemicro/analytics/analytics/httpsrv"
 	"github.com/codemicro/analytics/analytics/ingest"
-	"github.com/codemicro/analytics/analytics/webui"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -33,7 +33,7 @@ func run() error {
 		return err
 	}
 
-	http := webui.Start(conf, database)
+	http := httpsrv.Start(conf, database)
 
 	waitForSignal(syscall.SIGINT)
 
