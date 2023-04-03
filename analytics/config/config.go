@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/codemicro/analytics/analytics/config/internal/debug"
 )
 
@@ -27,8 +26,6 @@ func Load() (*Config, error) {
 	if err := cl.load("config.yml"); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(cl.rawConfigFileContents)
 
 	conf := new(Config)
 	conf.Ingest.Address = asString(cl.withDefault("ingest.address", "127.0.0.1:7500"))
