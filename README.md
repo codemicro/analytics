@@ -2,6 +2,8 @@
 
 A basic self-hosted analytics system that ingests logs from the Caddy HTTP server.
 
+Note that this is designed to be used with [Authentik's proxy provider](https://goauthentik.io/docs/providers/proxy/) and may be insecure when used without adequate authentication in place. 
+
 ## Architecture
 
 * Ingest server
@@ -19,7 +21,7 @@ The ingest server listens on `0.0.0.0:7500` and Datasette listens on `0.0.0.0:80
 The following environment variables should be set:
 * `BASE_URL`: the URL at which the Datasette instance can be accessed at.
 
-## Caddy configuration
+## Caddy logging configuration
 
 ```
 log {
