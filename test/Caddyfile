@@ -1,7 +1,0 @@
-localhost {
-    log {
-        output net 127.0.0.1:7500
-        format json
-    }
-    respond "Hello there!"
-}
