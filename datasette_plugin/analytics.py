@@ -20,7 +20,19 @@ with open("config.yml") as f:
 
 
 def is_request_authed(request):
-    return required_user_group in request.headers.get("x-authentik-groups", "")
+    return is_actor_authed(request.actor)
+
+
+def is_actor_authed(actor):
+    if actor is None:
+        return False
+    return required_user_group in actor.get("groups", {})
+
+
+@hookimpl
+def permission_allowed(actor, action):
+    if action == "execute-sql" or action == "permissions-debug" or action == "debug-menu":
+        return is_actor_authed(actor)
 
 
 @hookimpl
@@ -81,11 +93,16 @@ def generate_setting_span(datasette, request, setting_id, value):
 
 def generate_edit_span(datasette, request, setting_id, current_value):
     input_id = "config-edit-" + generate_random_string(10)
+    csrf_token_id = "config-edit-" + generate_random_string(10)
+
     entry_box = input_(type="text", name="new_value", value=current_value, _id=input_id)
+    csrf_box = input_(_id=csrf_token_id, type="hidden", name="csrftoken", value=request.cookies.get("ds_csrftoken", ""))
+
     anchor = a("(save)", href="#")
     anchor["hx-post"] = datasette.urls.path(datasette.urls.table(request.url_vars["database"], request.url_vars["table"]) + "/-/config-editor/edit/" + setting_id)
-    anchor["hx-include"] = "#" + input_id
-    sp = span(code(setting_id), ": ", entry_box, anchor)
+    anchor["hx-include"] = f"#{input_id},#{csrf_token_id}"
+
+    sp = span(code(setting_id), ": ", entry_box, anchor, csrf_box)
     sp["hx-target"] = "this"
     return sp
 
@@ -124,7 +141,7 @@ class Handlers:
     @staticmethod
     async def edit_record(datasette, request):
         if not is_request_authed(request):
-            return Handlers.not_authed_response()\
+            return Handlers.not_authed_response()
 
         setting_id = request.url_vars["key"]
         current_value = await datasette. \
