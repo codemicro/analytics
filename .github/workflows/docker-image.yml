@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: "ghcr.io/codemicro/analytics"
+  IMAGE_NAME: "ghcr.io/codemicro/analytics/analytics"
 
 concurrency: # Prevent two instances of this running at once
   group: build-docker-image
