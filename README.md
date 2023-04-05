@@ -1,6 +1,32 @@
 # codemicro/analytics
 
-A simple self-hosted analytics system that ingests logs from the Caddy HTTP server.
+A basic self-hosted analytics system that ingests logs from the Caddy HTTP server.
+
+## Architecture
+
+* Ingest server
+  * A Go app listening on a TCP socket to ingest JSON logs from the Caddy web server
+  * Groups requests into sessions and persists them to a database
+* Datasette
+  * Provides a frontend, data explorer and visualisation tool
+
+## Docker
+
+`Dockerfile` can be used for deployment. The directory containing the database and configuration file (which must be called `analytics.db` and `config.yml` respectively) should be mounted at `/analytics/run` within the container.
+
+The ingest server listens on `0.0.0.0:7500` and Datasette listens on `0.0.0.0:8001`.
+
+The following environment variables should be set:
+* `BASE_URL`: the URL at which the Datasette instance can be accessed at.
+
+## Caddy configuration
+
+```
+log {
+    output net whateveraddr:7500
+    format json
+}
+```
 
 ---
 
