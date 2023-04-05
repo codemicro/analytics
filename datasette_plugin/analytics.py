@@ -30,6 +30,20 @@ def is_actor_authed(actor):
 
 
 @hookimpl
+def actor_from_request(request):
+    # This is designed to convert Authentik proxy provider headers into an actor.
+    # We're assuming every request is authenticated because that's how that provider works.
+    rh = request.headers
+    return {
+        "id": rh.get("x-authentik-uid"),
+        "name": rh.get("x-authentik-name"),
+        "username": rh.get("x-authentik-username"),
+        "email": rh.get("x-authentik-email"),
+        "groups": rh.get("x-authentik-groups", "").split("|"),
+    }
+
+
+@hookimpl
 def permission_allowed(actor, action):
     if action == "execute-sql" or action == "permissions-debug" or action == "debug-menu":
         return is_actor_authed(actor)
