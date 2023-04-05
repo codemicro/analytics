@@ -22,7 +22,7 @@ func Load() (*Config, error) {
 	}
 
 	conf := new(Config)
-	conf.Ingest.Address = asString(cl.withDefault("ingest.address", "127.0.0.1:7500"))
+	conf.Ingest.Address = asString(cl.withDefault("ingest.address", "0.0.0.0:7500"))
 	conf.Database.DSN = asString(cl.withDefault("database.dsn", "analytics.db"))
 
 	return conf, nil
