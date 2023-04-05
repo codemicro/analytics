@@ -4,6 +4,7 @@ import (
 	"github.com/codemicro/analytics/ingest/config"
 	"github.com/codemicro/analytics/ingest/db"
 	"github.com/codemicro/analytics/ingest/ingest"
+	"github.com/codemicro/analytics/ingest/worker"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -26,6 +27,8 @@ func run() error {
 	if err != nil {
 		return err
 	}
+
+	worker.Start(database)
 
 	ig, err := ingest.Start(conf, database)
 	if err != nil {
