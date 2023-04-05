@@ -14,7 +14,6 @@ const interval = time.Hour
 func Start(db *db.DB) {
 	ticker := time.NewTicker(interval)
 	logger := log.Logger.With().Str("location", "worker").Logger()
-	run(db, logger)
 	go func() {
 		for {
 			<-ticker.C
