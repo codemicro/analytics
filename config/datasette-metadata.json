@@ -1,0 +1,27 @@
+{
+  "databases": {
+    "analytics": {
+      "tables": {
+        "bun_migrations": {
+          "hidden": true
+        },
+        "bun_migration_locks": {
+          "hidden": true
+        }
+      }
+    }
+  },
+  "plugins": {
+    "oidc.py": {
+      "issuer": {
+        "$env": "OIDC_ISSUER"
+      },
+      "client_secret": {
+        "$env": "OIDC_SECRET"
+      },
+      "client_id": {
+        "$env": "OIDC_ID"
+      }
+    }
+  }
+}
