@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/codemicro/analytics/analytics/db/models"
+	"github.com/codemicro/analytics/ingest/db/models"
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/uptrace/bun"
 )

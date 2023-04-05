@@ -2,7 +2,7 @@ package migrations
 
 import (
 	"context"
-	"github.com/codemicro/analytics/analytics/db/models"
+	"github.com/codemicro/analytics/ingest/db/models"
 	"github.com/rs/zerolog/log"
 	"github.com/uptrace/bun"
 )

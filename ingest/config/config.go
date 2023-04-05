@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/codemicro/analytics/analytics/config/internal/debug"
+	"github.com/codemicro/analytics/ingest/config/internal/debug"
 )
 
 var Debug = debug.Enable

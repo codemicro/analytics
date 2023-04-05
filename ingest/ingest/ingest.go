@@ -3,8 +3,8 @@ package ingest
 import (
 	"bufio"
 	"errors"
-	"github.com/codemicro/analytics/analytics/config"
-	"github.com/codemicro/analytics/analytics/db"
+	"github.com/codemicro/analytics/ingest/config"
+	"github.com/codemicro/analytics/ingest/db"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net"

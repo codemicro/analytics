@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/codemicro/analytics/analytics/config"
-	"github.com/codemicro/analytics/analytics/db"
-	"github.com/codemicro/analytics/analytics/httpsrv"
-	"github.com/codemicro/analytics/analytics/ingest"
+	"github.com/codemicro/analytics/ingest/config"
+	"github.com/codemicro/analytics/ingest/db"
+	"github.com/codemicro/analytics/ingest/ingest"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -33,14 +32,11 @@ func run() error {
 		return err
 	}
 
-	http := httpsrv.Start(conf, database)
-
 	waitForSignal(syscall.SIGINT)
 
 	log.Info().Msg("terminating")
 
 	_ = ig.Stop()
-	_ = http.Stop()
 	return nil
 }
 
