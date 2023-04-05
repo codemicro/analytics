@@ -10,18 +10,5 @@
         }
       }
     }
-  },
-  "plugins": {
-    "oidc.py": {
-      "issuer": {
-        "$env": "OIDC_ISSUER"
-      },
-      "client_secret": {
-        "$env": "OIDC_SECRET"
-      },
-      "client_id": {
-        "$env": "OIDC_ID"
-      }
-    }
   }
 }
